@@ -29,6 +29,11 @@ class GithubClient():
         url = tmpl.format(owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
+    def get_pr_commits(self, owner, repo, number):
+        tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/commits"
+        url = tmpl.format(owner=owner, repo=repo, number=number)
+        return self._paginated_getter(url)
+
     def get_pr_comments(self, owner, repo, number):
         tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/comments"
         url = tmpl.format(owner=owner, repo=repo, number=number)
@@ -141,6 +146,17 @@ for pr_link, owner, repo, number, pr_reviews_raw in prs_with_reviews:
             'date': dateutil.parser.parse(comment['created_at'])
         })
 
+    # Collect commits
+    commits = []
+    commits_raw = client.get_pr_commits(owner, repo, number)
+    for commit in commits_raw:
+        commits.append({
+            'hash': commit['sha'][:8],
+            'message': commit['commit']['message'].split('\n')[0],
+            'user': commit['commit']['author']['name'],
+            'date': dateutil.parser.parse(commit['commit']['author']['date'])
+        })
+
     print('------')
     # Print PR title and current user review stat
     pr_info_raw = client.get_pr(owner, repo, number)
@@ -163,8 +179,16 @@ for pr_link, owner, repo, number, pr_reviews_raw in prs_with_reviews:
     # print out new comments since last user activity
     new_comments = [x for x in comments if x['date'] > last_user_comment_date]
     if new_comments:
-        print('\t New comments:')
+        print('New comments:')
         for comment in new_comments:
-            print('\t\t{}: {}'.format(comment['user'], comment['text']))
+            print('\t{}: {}'.format(comment['user'], comment['text']))
+
+    # print new commits since last activity
+    new_commits = [x for x in commits if x['date'] > last_user_comment_date]
+    if new_commits:
+        print('New commits:')
+        for commit in new_commits:
+            print('\t{}: "{}" by {}'.format(
+                commit['hash'], commit['message'], commit['user']))
 
     print('\n')
