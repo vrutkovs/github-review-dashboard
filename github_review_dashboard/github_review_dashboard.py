@@ -4,6 +4,7 @@ import re
 import dateutil.parser
 import datetime
 from dateutil.tz import tzutc
+import sys
 
 
 class GithubClient():
@@ -96,8 +97,12 @@ class GithubClient():
 
 
 TOKEN = 'e7070e8a08170ca71ec0ba5566b3a19989db6b26'
-USER = 'vrutkovs'
 NEVER = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
+
+if len(sys.argv) < 2:
+    raise RuntimeError("Specify a username as a parameter")
+
+USER = sys.argv[1]
 
 client = GithubClient(token=TOKEN)
 raw_prs = client.get_involved_pull_requests(USER)
