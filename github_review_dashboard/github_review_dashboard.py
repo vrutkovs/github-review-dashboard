@@ -138,7 +138,7 @@ for pr_link, owner, repo, number, pr_reviews_raw in prs_with_reviews:
         comments.append({
             'user': comment['user']['login'],
             'text': comment['body'],
-            'date': dateutil.parser.parse(pr_review['submitted_at'])
+            'date': dateutil.parser.parse(comment['created_at'])
         })
 
     print('------')
