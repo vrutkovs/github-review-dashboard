@@ -13,7 +13,10 @@
 <body class="cards-pf container-cards-pf">
 <div class="container-fluid container-cards-pf">
   {% for item in items %}
-    {% if loop.first %}<div class="row row-cards-pf">{% endif %}
+    {% if loop.first %}
+      <h1 class="text-center">PR review queue for {{user}}</h1>
+      <div class="row row-cards-pf">
+    {% endif %}
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
       <div class="card-pf card-pf-view card-pf-view-select card-pf-view-single-select">
         <div class="card-pf-body">
@@ -65,7 +68,7 @@
   {% if loop.index is divisibleby 2 %}</div><div class="row row-cards-pf">{% endif %}
   {% if loop.last %}</div>{% endif %}
   {% else %}
-  <h3>PR review queue is empty. Good job!</h3>
+  <h1 class="text-center">PR review queue is empty. Good job!</h1>
   {% endfor %}
 </div>
 </body>
