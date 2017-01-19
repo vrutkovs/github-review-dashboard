@@ -108,9 +108,15 @@ def make_report(user):
         user_comments = filter(lambda x: x['user'] == user, comments)
         sorted_user_comments = sorted(user_comments, key=lambda x: x['date'])
         last_user_comment_date = sorted_user_comments[-1]['date'] if sorted_user_comments else NEVER
+        last_user_review_date = review_results.get(user, {}).get('date', None) or NEVER
+
+        last_user_activity = max([
+            last_user_comment_date,
+            last_user_review_date
+        ])
 
         # print out new comments since last user activity
-        new_comments = [x for x in comments if x['date'] > last_user_comment_date]
+        new_comments = [x for x in comments if x['date'] > last_user_activity]
         for comment in new_comments:
             report_entry['new_comments'].append({
                 'date': comment['date'],
@@ -124,7 +130,7 @@ def make_report(user):
 
         # print new commits since last activity
         new_commits = [x for x in commits
-            if x['date'] > last_user_comment_date and
+            if x['date'] > last_user_activity and
                x['user_email'] != user_email]
         for commit in new_commits:
             report_entry['new_commits'].append({
@@ -133,6 +139,7 @@ def make_report(user):
                 'message': commit['message']
             })
 
+        # Skip PR if no new comments/commits available
         if report_entry['new_commits'] or report_entry['new_commits']:
             report.append(report_entry)
 
