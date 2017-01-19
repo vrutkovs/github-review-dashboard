@@ -73,5 +73,9 @@
   {% else %}
   <h1 class="text-center">PR review queue is empty. Good job!</h1>
   {% endfor %}
+  <div class="navbar navbar-fixed-bottom">
+  {% block footer %}{% endblock %}
+  <div class="text-muted pull-right">{% include 'commit.jinja2' %}</div>
+</div>
 </body>
 </html>

@@ -12,6 +12,8 @@ RUN dnf update -y && \
 WORKDIR /dash/github_review_dashboard
 ADD token /dash/github_review_dashboard/token
 
+RUN git log -1 --pretty=format:'%h - %s (%ci)' --abbrev-commit > templates/commit.jinja2
+
 EXPOSE 8080
 
 CMD ["python3", "github_reviews_web.py"]
