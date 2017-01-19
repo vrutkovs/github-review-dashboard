@@ -16,6 +16,11 @@ class GithubClient():
         url = tmpl.format(username=username)
         return self._paginated_getter(url, subkey='items')
 
+    def get_user_info(self, username):
+        tmpl = "https://api.github.com/users/{username}"
+        url = tmpl.format(username=username)
+        return self._getter(url)
+
     def get_pr(self, owner, repo, number):
         tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}"
         url = tmpl.format(owner=owner, repo=repo, number=number)

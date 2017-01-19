@@ -68,6 +68,7 @@ def get_pr_commits(client, owner, repo, number):
             'hash': commit['sha'][:8],
             'message': commit['commit']['message'].split('\n')[0],
             'user': commit['commit']['author']['name'],
+            'user_email': commit['commit']['author']['email'],
             'date': dateutil.parser.parse(commit['commit']['author']['date'])
         })
     return commits
@@ -117,8 +118,14 @@ def make_report(user):
                 'text': comment['text']
             })
 
+        # Get user email so we could filter out new commits by this user
+        user_info_raw = client.get_user_info(user)
+        user_email = user_info_raw['email']
+
         # print new commits since last activity
-        new_commits = [x for x in commits if x['date'] > last_user_comment_date]
+        new_commits = [x for x in commits
+            if x['date'] > last_user_comment_date and
+               x['user_email'] != user_email]
         for commit in new_commits:
             report_entry['new_commits'].append({
                 'hash': commit['hash'],
