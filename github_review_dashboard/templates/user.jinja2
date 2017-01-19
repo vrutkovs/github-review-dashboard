@@ -1,45 +1,69 @@
 <html>
 <head>
+    <!-- jQuery -->
+    <script src="/static/bower/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="/static/bower/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- PatternFly -->
+    <link href="/static/bower/patternfly/dist/css/patternfly.min.css" rel="stylesheet" media="screen, print">
+    <link href="/static/bower/patternfly/dist/css/patternfly-additions.min.css" rel="stylesheet" media="screen, print">
 </head>
 
-<body>
-{% for item in items %}
-<div>
-  <h4><a href='{{ item.pr_link }}'>{{ item.pr_title }}</a> by {{ item.pr_owner }}</h4>
+<body class="cards-pf container-cards-pf">
+<div class="container-fluid container-cards-pf">
+  {% for item in items %}
+    {% if loop.first %}<div class="row row-cards-pf">{% endif %}
+    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+      <div class="card-pf card-pf-view card-pf-view-select card-pf-view-single-select">
+        <div class="card-pf-body">
+          <h2 class="card-pf-title text-center">
+            <span class="fa fa-code-fork card-pf-icon-circle"></span>
+            <a href='{{ item.pr_link }}'>{{ item.pr_title }}</a> by <strong>{{ item.pr_owner }}</strong>
+          </h2>
+          <div class="card-pf-items text-center">
+            {% for review, result in item.pr_reviews.items() %}
+            <div class="card-pf-item">
+              <span class="card-pf-item-text">{{ review }}</span>
+              {% if result == 'COMMENTED' %}
+                <span class="fa fa-comment-o"></span>
+              {% elif result == 'APPROVED' %}
+                <span class="fa fa-thumbs-up"></span>
+              {% else %}
+                <span class="card-pf-item-text">{{ result }}</span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
 
-  <div>
-    <span>Reviews</span>
-    {% for review, result in item.pr_reviews.items() %}
-    <div>
-      <span>{{ review }} - {{ result }}</span>
-    </div>
-    {% endfor %}
-  </div>
+          {% if item.new_comments %}
+          <div class="card-pf-info" style="max-height: 150px; overflow-y: auto;">
+            New comments:<br/>
+            {% for comment in item.new_comments %}
+            <div class="card-pf-item-text">
+              <strong>{{ comment.user }}</strong><span>{{ comment.text }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
 
-  {% if item.new_comments %}
-  <div>
-    <span>New comments</span>
-    {% for comment in item.new_comments %}
-    <div>
-      <h5>{{ comment.user }}</h5>
-      <span>{{ comment.text }}</span>
+          {% if item.new_commits %}
+          <div class="card-pf-info" style="max-height: 150px; overflow-y: auto;">
+            New commits:<br/>
+            {% for commit in item.new_commits %}
+            <div class="card-pf-item-text">
+              <!-- TODO: make proper link here -->
+              {{ commit.hash }} by <strong>{{ commit.user }}</strong>
+              <p>{{commit.message}}</p>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
-  {% if item.new_commits %}
-  <div>
-    <span>New commits</span>
-    {% for commit in item.new_commits %}
-    <div>
-      <span>{{ commit.hash }} - "{{ commit.message}}" by {{ commit.user }}</span>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
+  {% if loop.index is divisibleby 2 %}</div><div class="row row-cards-pf">{% endif %}
+  {% if loop.last %}</div>{% endif %}
+  {% endfor %}
 </div>
-<hr/>
-{% endfor %}}
 </body>
 </html>
