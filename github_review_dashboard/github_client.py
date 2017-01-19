@@ -12,7 +12,8 @@ class GithubClient():
         self.session.headers['Accept'] = 'application/vnd.github.black-cat-preview+json'
 
     def get_involved_pull_requests(self, username):
-        tmpl = "https://api.github.com/search/issues?q=involves%3A{username}%20state%3Aopen%20type%3Apr&per_page=100"
+        tmpl = "https://api.github.com/search/issues"\
+               "?q=involves%3A{username}%20state%3Aopen%20type%3Apr&per_page=100"
         url = tmpl.format(username=username)
         return self._paginated_getter(url, subkey='items')
 

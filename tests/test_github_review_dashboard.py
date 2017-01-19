@@ -12,7 +12,7 @@ Tests for `github_review_dashboard` module.
 import sys
 import unittest
 
-from github_review_dashboard import github_review_dashboard
+import github_review_dashboard
 
 
 

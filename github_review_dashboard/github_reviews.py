@@ -13,7 +13,9 @@ NEVER = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
 
 token_file_path = os.path.join(os.getcwd(), 'token')
 if not os.path.exists(token_file_path):
-    print("Auth token not found, please create a new token at Settings - Personal access tokens and put it in 'token' file")
+    print("Auth token not found, "
+          "please create a new token at Settings - 'Personal access tokens' "
+          "and put it in 'token' file")
 else:
     with open(token_file_path, "r") as token_file:
         TOKEN = token_file.read().strip()
@@ -22,7 +24,6 @@ else:
 def filter_prs_without_reviews(client, user):
     raw_prs = client.get_involved_pull_requests(user)
     pr_links = sorted([x['html_url'] for x in raw_prs])
-    prs_with_reviews = []
 
     for pr_link in pr_links:
         owner, repo, number = client.get_pr_info_from_link(pr_link)
@@ -141,8 +142,8 @@ def make_report(user, client, prs_with_reviews):
 
         # print new commits since last activity
         new_commits = [x for x in commits
-            if x['date'] > last_user_activity and
-               x['user_email'] != user_email]
+                       if x['date'] > last_user_activity and
+                       x['user_email'] != user_email]
         for commit in new_commits:
             report_entry['new_commits'].append({
                 'hash': commit['hash'],

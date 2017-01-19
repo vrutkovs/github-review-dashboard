@@ -3,8 +3,7 @@
 
 from setuptools import setup
 from pip.req import parse_requirements
-
-install_reqs =
+from pip.download import PipSession
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -12,9 +11,11 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = parse_requirements('requirements.txt')
-
-test_requirements = parse_requirements('requirements_dev.txt')
+pip_session = PipSession()
+parsed_reqs = parse_requirements('requirements.txt', session=pip_session)
+parsed_reqs_dev = parse_requirements('requirements_dev.txt', session=pip_session)
+requirements = [str(x.req) for x in parsed_reqs]
+test_requirements = [str(x.req) for x in parsed_reqs_dev]
 
 setup(
     name='github_review_dashboard',
@@ -40,7 +41,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
     test_suite='tests',
