@@ -1,0 +1,21 @@
+{
+  "name": "github_review_dashboard",
+  "homepage": "https://github.com/vrutkovs/github-review-dashboard",
+  "authors": [
+    "Vadim Rutkovsky <vrutkovs@redhat.com>"
+  ],
+  "description": "Github Review Dashboard is a tool to show the PRs user is involved and their status",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "static/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "patternfly": "^3.18.1"
+  }
+}

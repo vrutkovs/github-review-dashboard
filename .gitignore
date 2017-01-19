@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 github_review_dashboard/token
+github_review_dashboard/static/bower
 
 # C extensions
 *.so
