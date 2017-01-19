@@ -23,7 +23,7 @@ after_success:
     touch token &&
     docker build -t vrutkovs/github_review_dashboard . && 
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" && 
-    docker push vrutkovs/github_review_dashboard
+    docker push vrutkovs/github_review_dashboard;
     fi
 
 deploy:
