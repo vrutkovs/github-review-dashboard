@@ -9,10 +9,6 @@ Github Review Dashboard
 .. image:: https://img.shields.io/travis/vrutkovs/github_review_dashboard.svg
         :target: https://travis-ci.org/vrutkovs/github_review_dashboard
 
-.. image:: https://readthedocs.org/projects/github-review-dashboard/badge/?version=latest
-        :target: https://github-review-dashboard.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
-
 .. image:: https://pyup.io/repos/github/vrutkovs/github_review_dashboard/shield.svg
      :target: https://pyup.io/repos/github/vrutkovs/github_review_dashboard/
      :alt: Updates
@@ -20,15 +16,15 @@ Github Review Dashboard
 
 Github Review Dashboard is a tool to show the PRs user is involved and their status
 
-
 * Free software: MIT license
-* Documentation: https://github-review-dashboard.readthedocs.io.
 
 
-Features
+How to Run
 --------
 
-* TODO
+* Create a Github token (with no checkboxes enabled) at Settings - Personal Access Tokens
+* Put it in a 'token' file
+* Build and run the Docker image
 
 Credits
 ---------
