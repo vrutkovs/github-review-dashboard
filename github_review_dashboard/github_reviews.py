@@ -103,6 +103,9 @@ def make_report(user):
 
         report_entry = {
             'pr_link': pr_link,
+            'owner': owner,
+            'repo': repo,
+            'pr_number': number,
             'pr_title': pr_info_raw['title'],
             'pr_owner': pr_info_raw['user']['login'],
             'pr_reviews': {},

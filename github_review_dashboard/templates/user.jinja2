@@ -20,6 +20,9 @@
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
       <div class="card-pf card-pf-view card-pf-view-select card-pf-view-single-select">
         <div class="card-pf-body">
+          <p class="card-pf-title text-center text-muted">
+            {{ item.owner }}/{{ item.repo }} PR#{{ item.pr_number }}
+          </p>
           <h2 class="card-pf-title text-center">
             <span class="fa fa-code-fork card-pf-icon-circle"></span>
             <a href='{{ item.pr_link }}' target="_blank">{{ item.pr_title }}</a> by <strong>{{ item.pr_owner }}</strong>
