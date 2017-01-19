@@ -64,6 +64,8 @@
     </div>
   {% if loop.index is divisibleby 2 %}</div><div class="row row-cards-pf">{% endif %}
   {% if loop.last %}</div>{% endif %}
+  {% else %}
+  <h3>PR review queue is empty. Good job!</h3>
   {% endfor %}
 </div>
 </body>
