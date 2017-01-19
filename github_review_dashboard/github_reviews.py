@@ -11,14 +11,17 @@ from github_client import GithubClient
 TOKEN = None
 NEVER = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
 
-token_file_path = os.path.join(os.getcwd(), 'token')
-if not os.path.exists(token_file_path):
-    print("Auth token not found, "
-          "please create a new token at Settings - 'Personal access tokens' "
-          "and put it in 'token' file")
+if 'TOKEN' in os.environ:
+    TOKEN = os.environ['TOKEN']
 else:
-    with open(token_file_path, "r") as token_file:
-        TOKEN = token_file.read().strip()
+    token_file_path = os.path.join(os.getcwd(), 'token')
+    if not os.path.exists(token_file_path):
+        print("Auth token not found, "
+              "please create a new token at Settings - 'Personal access tokens' "
+              "and put it in 'token' file or set TOKEN env var")
+    else:
+        with open(token_file_path, "r") as token_file:
+            TOKEN = token_file.read().strip()
 
 
 def filter_prs_without_reviews(client, user):
