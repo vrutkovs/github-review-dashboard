@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import dateutil.parser
 import datetime
-import sys
 import os
 
 from dateutil.tz import tzutc
@@ -12,9 +11,6 @@ from github_client import GithubClient
 TOKEN = None
 NEVER = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
 
-if len(sys.argv) < 2:
-    raise RuntimeError("Specify a username as a parameter")
-
 token_file_path = os.path.join(os.getcwd(), 'token')
 if not os.path.exists(token_file_path):
     print("Auth token not found, please create a new token at Settings - Personal access tokens and put it in 'token' file")
@@ -22,11 +18,9 @@ else:
     with open(token_file_path, "r") as token_file:
         TOKEN = token_file.read().strip()
 
-USER = sys.argv[1]
 
-
-def filter_prs_without_reviews(client):
-    raw_prs = client.get_involved_pull_requests(USER)
+def filter_prs_without_reviews(client, user):
+    raw_prs = client.get_involved_pull_requests(user)
     pr_links = sorted([x['html_url'] for x in raw_prs])
     prs_with_reviews = []
 
@@ -79,12 +73,12 @@ def get_pr_commits(client, owner, repo, number):
     return commits
 
 
-def make_report():
+def make_report(user):
     report = []
 
     client = GithubClient(token=TOKEN)
 
-    prs_with_reviews = filter_prs_without_reviews(client)
+    prs_with_reviews = filter_prs_without_reviews(client, user)
 
     for pr_data in prs_with_reviews:
         pr_link, owner, repo, number, pr_reviews_raw = pr_data
@@ -110,7 +104,7 @@ def make_report():
             report_entry['pr_reviews'][pr_reviewer] = pr_review_result
 
         # Find last user comment or review
-        user_comments = filter(lambda x: x['user'] == USER, comments)
+        user_comments = filter(lambda x: x['user'] == user, comments)
         sorted_user_comments = sorted(user_comments, key=lambda x: x['date'])
         last_user_comment_date = sorted_user_comments[-1]['date'] if sorted_user_comments else NEVER
 
@@ -134,26 +128,3 @@ def make_report():
         report.append(report_entry)
 
     return report
-
-report = make_report()
-
-for entry in report:
-    print("------")
-    print('{} - {}'.format(entry['pr_link'], entry['pr_title']))
-    print("PR Owner: {}".format(entry['pr_owner']))
-
-    print("Reviews:")
-    for reviewer, result in entry['pr_reviews'].items():
-        print('\t {} - {}'.format(reviewer, result))
-
-    if entry['new_comments']:
-        print("New comments:")
-        for comment in entry['new_comments']:
-            print('\t{}: {}'.format(comment['user'], comment['text']))
-
-    if entry['new_commits']:
-        print("New commits:")
-        for commit in entry['new_commits']:
-            print('\t{}: "{}" by {}'.format(
-                commit['hash'], commit['message'], commit['user']))
-    print("\n")
