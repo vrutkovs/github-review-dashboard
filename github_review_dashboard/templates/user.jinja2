@@ -18,7 +18,7 @@
         <div class="card-pf-body">
           <h2 class="card-pf-title text-center">
             <span class="fa fa-code-fork card-pf-icon-circle"></span>
-            <a href='{{ item.pr_link }}'>{{ item.pr_title }}</a> by <strong>{{ item.pr_owner }}</strong>
+            <a href='{{ item.pr_link }}' target="_blank">{{ item.pr_title }}</a> by <strong>{{ item.pr_owner }}</strong>
           </h2>
           <div class="card-pf-items text-center">
             {% for review, result in item.pr_reviews.items() %}
