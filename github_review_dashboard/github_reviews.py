@@ -25,11 +25,9 @@ else:
 USER = sys.argv[1]
 
 
-def make_report():
-    client = GithubClient(token=TOKEN)
+def filter_prs_without_reviews(client):
     raw_prs = client.get_involved_pull_requests(USER)
     pr_links = sorted([x['html_url'] for x in raw_prs])
-
     prs_with_reviews = []
 
     for pr_link in pr_links:
@@ -42,37 +40,63 @@ def make_report():
 
         prs_with_reviews.append((pr_link, owner, repo, number, pr_reviews_raw))
 
+    return prs_with_reviews
 
-    for pr_link, owner, repo, number, pr_reviews_raw in prs_with_reviews:
+
+def get_pr_reviews(pr_reviews_raw):
+    review_results = {}
+    for pr_review in pr_reviews_raw:
+        user = pr_review['user']['login']
+        review_results[user] = {
+            'state': pr_review['state'],
+            'date': dateutil.parser.parse(pr_review['submitted_at'])
+        }
+    return review_results
+
+
+def get_pr_comments(client, owner, repo, number):
+    comments = []
+    comments_raw = client.get_pr_comments(owner, repo, number)
+    for comment in comments_raw:
+        comments.append({
+            'user': comment['user']['login'],
+            'text': comment['body'],
+            'date': dateutil.parser.parse(comment['created_at'])
+        })
+    return comments
+
+
+def get_pr_commits(client, owner, repo, number):
+    commits = []
+    commits_raw = client.get_pr_commits(owner, repo, number)
+    for commit in commits_raw:
+        commits.append({
+            'hash': commit['sha'][:8],
+            'message': commit['commit']['message'].split('\n')[0],
+            'user': commit['commit']['author']['name'],
+            'date': dateutil.parser.parse(commit['commit']['author']['date'])
+        })
+    return commits
+
+
+def make_report():
+    report = {}
+
+    client = GithubClient(token=TOKEN)
+
+    prs_with_reviews = filter_prs_without_reviews(client)
+
+    for pr_data in prs_with_reviews:
+        pr_link, owner, repo, number, pr_reviews_raw = pr_data
+
         # Collect review results
-        review_results = {}
-        for pr_review in pr_reviews_raw:
-            user = pr_review['user']['login']
-            review_results[user] = {
-                'state': pr_review['state'],
-                'date': dateutil.parser.parse(pr_review['submitted_at'])
-            }
+        review_results = get_pr_reviews(pr_reviews_raw)
 
         # Collect comments
-        comments = []
-        comments_raw = client.get_pr_comments(owner, repo, number)
-        for comment in comments_raw:
-            comments.append({
-                'user': comment['user']['login'],
-                'text': comment['body'],
-                'date': dateutil.parser.parse(comment['created_at'])
-            })
+        comments = get_pr_comments(client, owner, repo, number)
 
         # Collect commits
-        commits = []
-        commits_raw = client.get_pr_commits(owner, repo, number)
-        for commit in commits_raw:
-            commits.append({
-                'hash': commit['sha'][:8],
-                'message': commit['commit']['message'].split('\n')[0],
-                'user': commit['commit']['author']['name'],
-                'date': dateutil.parser.parse(commit['commit']['author']['date'])
-            })
+        commits = get_pr_commits(client, owner, repo, number)
 
         print('------')
         # Print PR title and current user review stat
