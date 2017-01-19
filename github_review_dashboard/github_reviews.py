@@ -44,6 +44,14 @@ def get_pr_reviews(pr_reviews_raw):
                                reverse=True)
     for pr_review in pr_reviews_sorted:
         user = pr_review['user']['login']
+
+        # Don't replace approved/changes_required with 'commented'
+        # Github API quirk probably
+        existing_review = review_results.get(user, {}).get('state', None)
+        if existing_review in ['APPROVED', 'CHANGES_REQUESTED'] and \
+           pr_review['state'] == 'COMMENTED':
+            continue
+
         review_results[user] = {
             'state': pr_review['state'],
             'date': dateutil.parser.parse(pr_review['submitted_at'])
