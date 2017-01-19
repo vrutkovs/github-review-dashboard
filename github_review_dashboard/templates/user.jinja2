@@ -1,0 +1,45 @@
+<html>
+<head>
+</head>
+
+<body>
+{% for item in items %}
+<div>
+  <h4><a href='{{ item.pr_link }}'>{{ item.pr_title }}</a> by {{ item.pr_owner }}</h4>
+
+  <div>
+    <span>Reviews</span>
+    {% for review, result in item.pr_reviews.items() %}
+    <div>
+      <span>{{ review }} - {{ result }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if item.new_comments %}
+  <div>
+    <span>New comments</span>
+    {% for comment in item.new_comments %}
+    <div>
+      <h5>{{ comment.user }}</h5>
+      <span>{{ comment.text }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if item.new_commits %}
+  <div>
+    <span>New commits</span>
+    {% for commit in item.new_commits %}
+    <div>
+      <span>{{ commit.hash }} - "{{ commit.message}}" by {{ commit.user }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+<hr/>
+{% endfor %}}
+</body>
+</html>
