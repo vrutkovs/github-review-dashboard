@@ -39,7 +39,10 @@ def filter_prs_without_reviews(client, user):
 
 def get_pr_reviews(pr_reviews_raw):
     review_results = {}
-    for pr_review in pr_reviews_raw:
+    pr_reviews_sorted = sorted(pr_reviews_raw,
+                               key=lambda x: dateutil.parser.parse(x['submitted_at']),
+                               reverse=True)
+    for pr_review in pr_reviews_sorted:
         user = pr_review['user']['login']
         review_results[user] = {
             'state': pr_review['state'],
