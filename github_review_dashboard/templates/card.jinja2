@@ -1,0 +1,51 @@
+<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+  <div data-link="{{ item.pr_link }}" class="card-pf card-pf-view card-pf-view-select card-pf-view-single-select">
+    <div class="card-pf-body">
+      <p class="card-pf-title text-center text-muted">
+        {{ item.owner }}/{{ item.repo }} PR#{{ item.pr_number }}
+      </p>
+      <h2 class="card-pf-title text-center">
+        <span class="fa fa-code-fork card-pf-icon-circle"></span>
+        <a href='{{ item.pr_link }}' target="_blank">{{ item.pr_title }}</a> by <strong>{{ item.pr_owner }}</strong>
+      </h2>
+      <div class="card-pf-items text-center">
+        {% for review, result in item.pr_reviews.items() %}
+        <div class="card-pf-item">
+          <span class="card-pf-item-text">{{ review }}</span>
+          {% if result == 'COMMENTED' %}
+            <span class="fa fa-comment-o"></span>
+          {% elif result == 'APPROVED' %}
+            <span class="fa fa-thumbs-up"></span>
+          {% elif result == 'CHANGES_REQUESTED' %}
+            <span class="fa fa-times"></span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if item.new_comments %}
+      <div class="card-pf-info" style="max-height: 150px; overflow-y: auto;">
+        New comments:<br/>
+        {% for comment in item.new_comments %}
+        <div class="card-pf-item-text">
+          <strong>{{ comment.user }}</strong><span>{{ comment.text }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if item.new_commits %}
+      <div class="card-pf-info" style="max-height: 150px; overflow-y: auto;">
+        New commits:<br/>
+        {% for commit in item.new_commits %}
+        <div class="card-pf-item-text">
+          <!-- TODO: make proper link here -->
+          {{ commit.hash }} by <strong>{{ commit.user }}</strong>
+          <p>{{commit.message}}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

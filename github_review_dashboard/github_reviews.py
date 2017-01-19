@@ -32,9 +32,7 @@ def filter_prs_without_reviews(client, user):
             print("Skipping {}: no reviews found".format(pr_link))
             continue
 
-        prs_with_reviews.append((pr_link, owner, repo, number, pr_reviews_raw))
-
-    return prs_with_reviews
+        yield (pr_link, owner, repo, number, pr_reviews_raw)
 
 
 def get_pr_reviews(pr_reviews_raw):
@@ -85,13 +83,12 @@ def get_pr_commits(client, owner, repo, number):
     return commits
 
 
-def make_report(user):
-    report = []
-
+def prepare_report(user):
     client = GithubClient(token=TOKEN)
+    return (client, filter_prs_without_reviews(client, user))
 
-    prs_with_reviews = filter_prs_without_reviews(client, user)
 
+def make_report(user, client, prs_with_reviews):
     for pr_data in prs_with_reviews:
         pr_link, owner, repo, number, pr_reviews_raw = pr_data
 
@@ -155,6 +152,4 @@ def make_report(user):
 
         # Skip PR if no new comments/commits available
         if report_entry['new_commits'] or report_entry['new_commits']:
-            report.append(report_entry)
-
-    return report
+            yield report_entry
