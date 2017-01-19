@@ -8,10 +8,8 @@ import sys
 
 
 class GithubClient():
-    def __init__(self, token):
-        self.token = token
+    def __init__(self):
         self.session = requests.Session()
-        self.session.headers['Authorization'] = 'token {token}'.format(token=token)
         self.session.headers['Accept'] = 'application/vnd.github.black-cat-preview+json'
 
     def get_involved_pull_requests(self, username):
@@ -101,7 +99,6 @@ class GithubClient():
         ])
 
 
-TOKEN = 'e7070e8a08170ca71ec0ba5566b3a19989db6b26'
 NEVER = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
 
 if len(sys.argv) < 2:
@@ -109,7 +106,7 @@ if len(sys.argv) < 2:
 
 USER = sys.argv[1]
 
-client = GithubClient(token=TOKEN)
+client = GithubClient()
 raw_prs = client.get_involved_pull_requests(USER)
 pr_links = sorted([x['html_url'] for x in raw_prs])
 
