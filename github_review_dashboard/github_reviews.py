@@ -80,7 +80,7 @@ def get_pr_commits(client, owner, repo, number):
 
 
 def make_report():
-    report = {}
+    report = []
 
     client = GithubClient(token=TOKEN)
 
@@ -89,28 +89,25 @@ def make_report():
     for pr_data in prs_with_reviews:
         pr_link, owner, repo, number, pr_reviews_raw = pr_data
 
-        # Collect review results
+        pr_info_raw = client.get_pr(owner, repo, number)
+
         review_results = get_pr_reviews(pr_reviews_raw)
-
-        # Collect comments
         comments = get_pr_comments(client, owner, repo, number)
-
-        # Collect commits
         commits = get_pr_commits(client, owner, repo, number)
 
-        print('------')
-        # Print PR title and current user review stat
-        pr_info_raw = client.get_pr(owner, repo, number)
-        pr_title = pr_info_raw['title']
-        print('{} - {}'.format(pr_link, pr_title))
+        report_entry = {
+            'pr_link': pr_link,
+            'pr_title': pr_info_raw['title'],
+            'pr_owner': pr_info_raw['user']['login'],
+            'pr_reviews': {},
+            'new_comments': [],
+            'new_commits': []
+        }
 
-        pr_owner = pr_info_raw['user']['login']
-        print("PR Owner: {}".format(pr_owner))
-        print("Reviews:")
         # Print others review state
         for pr_reviewer in review_results:
             pr_review_result = review_results[pr_reviewer]['state']
-            print('\t {} - {}'.format(pr_reviewer, pr_review_result))
+            report_entry['pr_reviews'][pr_reviewer] = pr_review_result
 
         # Find last user comment or review
         user_comments = filter(lambda x: x['user'] == USER, comments)
@@ -119,19 +116,44 @@ def make_report():
 
         # print out new comments since last user activity
         new_comments = [x for x in comments if x['date'] > last_user_comment_date]
-        if new_comments:
-            print('New comments:')
-            for comment in new_comments:
-                print('\t{}: {}'.format(comment['user'], comment['text']))
+        for comment in new_comments:
+            report_entry['new_comments'].append({
+                'date': comment['date'],
+                'user': comment['user'],
+                'text': comment['text']
+            })
 
         # print new commits since last activity
         new_commits = [x for x in commits if x['date'] > last_user_comment_date]
-        if new_commits:
-            print('New commits:')
-            for commit in new_commits:
-                print('\t{}: "{}" by {}'.format(
-                    commit['hash'], commit['message'], commit['user']))
+        for commit in new_commits:
+            report_entry['new_commits'].append({
+                'hash': commit['hash'],
+                'user': commit['user'],
+                'message': commit['message']
+            })
+        report.append(report_entry)
 
-        print('\n')
+    return report
 
-make_report()
+report = make_report()
+
+for entry in report:
+    print("------")
+    print('{} - {}'.format(entry['pr_link'], entry['pr_title']))
+    print("PR Owner: {}".format(entry['pr_owner']))
+
+    print("Reviews:")
+    for reviewer, result in entry['pr_reviews'].items():
+        print('\t {} - {}'.format(reviewer, result))
+
+    if entry['new_comments']:
+        print("New comments:")
+        for comment in entry['new_comments']:
+            print('\t{}: {}'.format(comment['user'], comment['text']))
+
+    if entry['new_commits']:
+        print("New commits:")
+        for commit in entry['new_commits']:
+            print('\t{}: "{}" by {}'.format(
+                commit['hash'], commit['message'], commit['user']))
+    print("\n")
