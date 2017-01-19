@@ -10,8 +10,10 @@ async def root(request):
 
 @aiohttp_jinja2.template('user.jinja2')
 async def user_report(request):
+    user = request.match_info['user']
     return {
-        'items': github_reviews.make_report(request.match_info['user'])
+        'user': user,
+        'items': github_reviews.make_report(user)
     }
 
 app = web.Application(debug=True)
