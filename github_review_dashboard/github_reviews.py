@@ -132,6 +132,8 @@ def make_report(user):
                 'user': commit['user'],
                 'message': commit['message']
             })
-        report.append(report_entry)
+
+        if report_entry['new_commits'] or report_entry['new_commits']:
+            report.append(report_entry)
 
     return report
