@@ -19,7 +19,7 @@ install:
 script: "python setup.py test"
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" && -z "$TRAVIS_PULL_REQUEST" && "$TRAVIS_PYTHON_VERSION" == "3.5" ]; then
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then
     touch token &&
     docker build -t vrutkovs/github_review_dashboard . && 
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" && 
