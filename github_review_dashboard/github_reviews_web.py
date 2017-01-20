@@ -5,6 +5,7 @@ import jinja2
 
 import github_reviews
 
+
 async def root(request):
     return web.Response(text="Please open /<username> page")
 
@@ -18,6 +19,7 @@ async def user_report(request):
         'user': user,
         'ws_url': ws_url,
     }
+
 
 async def ws(request):
     user = request.match_info['user']
