@@ -45,7 +45,9 @@
             // Open PR link when a card is clicked
             $(".card-pf").click(function(e){
               var target = e.target;
-              window.open($(this).data("link"));
+              if ($(target).not('a')) {
+                window.open($(this).data("link"));
+              }
             });
           }
         }
