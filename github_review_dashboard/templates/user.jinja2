@@ -19,11 +19,6 @@
 
   <script>
     $(document).ready(function() {
-      $(".card-pf").click(function(e){
-        var target = e.target;
-        window.open($(this).data("link"));
-      });
-
       var row_id = -1;
       var card_id = 0;
       var row_obj;
@@ -41,6 +36,10 @@
             $('#headline').text('PR review queue is empty. Good job!');
           } else {
             $('#headline').text('PR review queue for {{user}}');
+            $(".card-pf").click(function(e){
+              var target = e.target;
+              window.open($(this).data("link"));
+            });
           }
         }
       };
