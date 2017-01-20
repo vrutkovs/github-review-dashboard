@@ -3,14 +3,14 @@ Github Review Dashboard
 ===============================
 
 
-.. image:: https://img.shields.io/pypi/v/github_review_dashboard.svg
-        :target: https://pypi.python.org/pypi/github_review_dashboard
+.. image:: https://img.shields.io/pypi/v/github-review-dashboard.svg
+        :target: https://pypi.python.org/pypi/github-review-dashboard
 
-.. image:: https://img.shields.io/travis/vrutkovs/github_review_dashboard.svg
-        :target: https://travis-ci.org/vrutkovs/github_review_dashboard
+.. image:: https://img.shields.io/travis/vrutkovs/github-review-dashboard.svg
+        :target: https://travis-ci.org/vrutkovs/github-review-dashboard
 
-.. image:: https://pyup.io/repos/github/vrutkovs/github_review_dashboard/shield.svg
-     :target: https://pyup.io/repos/github/vrutkovs/github_review_dashboard/
+.. image:: https://pyup.io/repos/github/vrutkovs/github-review-dashboard/shield.svg
+     :target: https://pyup.io/repos/github/vrutkovs/github-review-dashboard/
      :alt: Updates
 
 
