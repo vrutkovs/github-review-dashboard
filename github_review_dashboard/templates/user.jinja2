@@ -13,12 +13,12 @@
 </head>
 
 <body class="cards-pf container-cards-pf">
+  <small class="text-muted">{% include 'commit.jinja2' %}</small>
+
   <a class="github-fork-ribbon" href="https://github.com/vrutkovs/github-review-dashboard" title="Fork me on GitHub" target="_blank">Fork me on GitHub</a>
   <h1 id="headline" class="text-center">Building a PR review queue for {{user}}, please wait...</h1>
   <div id='cards' class="container-fluid container-cards-pf">
   </div>
-
-  <div class="text-muted pull-right">{% include 'commit.jinja2' %}</div>
 
   <script>
     $(document).ready(function() {
