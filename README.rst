@@ -3,9 +3,6 @@ Github Review Dashboard
 ===============================
 
 
-.. image:: https://img.shields.io/pypi/v/github-review-dashboard.svg
-        :target: https://pypi.python.org/pypi/github-review-dashboard
-
 .. image:: https://img.shields.io/travis/vrutkovs/github-review-dashboard.svg
         :target: https://travis-ci.org/vrutkovs/github-review-dashboard
 
