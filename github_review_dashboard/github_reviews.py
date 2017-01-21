@@ -8,20 +8,16 @@ from dateutil.tz import tzutc
 from github_client import GithubClient
 
 
-TOKEN = None
 NEVER = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
+
+TOKEN = None
 
 if 'TOKEN' in os.environ:
     TOKEN = os.environ['TOKEN']
 else:
-    token_file_path = os.path.join(os.getcwd(), 'token')
-    if not os.path.exists(token_file_path):
-        print("Auth token not found, "
-              "please create a new token at Settings - 'Personal access tokens' "
-              "and put it in 'token' file or set TOKEN env var")
-    else:
-        with open(token_file_path, "r") as token_file:
-            TOKEN = token_file.read().strip()
+    print("Auth token not found, "
+          "please create a new token at Settings - 'Personal access tokens' "
+          "and set TOKEN env var")
 
 
 def filter_prs_without_reviews(client, user):

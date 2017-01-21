@@ -7,12 +7,10 @@ RUN dnf update -y && \
     pip3 install -r requirements.txt && \
     npm install -g bower && \
     bower install --allow-root && \
-    dnf clean all
+    dnf clean all && \
+    git log -1 --pretty=format:'%h' --abbrev-commit > github_review_dashboard/templates/commit.jinja2
 
 WORKDIR /dash/github_review_dashboard
-ADD token /dash/github_review_dashboard/token
-
-RUN git log -1 --pretty=format:'%h' --abbrev-commit > templates/commit.jinja2
 
 EXPOSE 8080
 

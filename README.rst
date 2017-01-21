@@ -23,8 +23,7 @@ How to Run
 --------
 
 * Create a Github token (with no checkboxes enabled) at Settings - Personal Access Tokens
-* Put it in a 'token' file
-* Build and run the Docker image
+* Build and run the Docker image with env var 'TOKEN' set
 
 Credits
 ---------
