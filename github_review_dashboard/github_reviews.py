@@ -20,7 +20,7 @@ else:
           "and set TOKEN env var")
 
 
-def filter_prs_without_reviews(client, user):
+def get_prs(client, user):
     raw_prs = client.get_involved_pull_requests(user)
     pr_links = sorted([x['html_url'] for x in raw_prs])
 
@@ -28,10 +28,6 @@ def filter_prs_without_reviews(client, user):
         owner, repo, number = client.get_pr_info_from_link(pr_link)
 
         pr_reviews_raw = client.get_pr_reviews(owner, repo, number)
-        if not pr_reviews_raw:
-            print("Skipping {}: no reviews found".format(pr_link))
-            continue
-
         yield (pr_link, owner, repo, number, pr_reviews_raw)
 
 
@@ -85,7 +81,7 @@ def get_pr_commits(client, owner, repo, number):
 
 def prepare_report(user):
     client = GithubClient(token=TOKEN)
-    return (client, filter_prs_without_reviews(client, user))
+    return (client, get_prs(client, user))
 
 
 def make_report(user, client, prs_with_reviews):
