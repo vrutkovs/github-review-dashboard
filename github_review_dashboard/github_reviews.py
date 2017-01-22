@@ -117,12 +117,27 @@ def make_report(user, client, prs_with_reviews):
         last_user_comment_date = sorted_user_comments[-1]['date'] if sorted_user_comments else NEVER
         last_user_review_date = review_results.get(user, {}).get('date', None) or NEVER
 
+        # Get user email so we could filter out new commits by this user
+        user_info_raw = client.get_user_info(user)
+        user_email = user_info_raw['email']
+
+        user_commits = filter(lambda x: x['user_email'] == user_email, commits)
+        sorted_user_commits = sorted(user_commits, key=lambda x: x['date'])
+        last_user_commit_date = sorted_user_commits[-1]['date'] if sorted_user_commits else NEVER
+
+        # If last activity date cannot be found the PR should be skipped
+        if last_user_comment_date == NEVER and \
+           last_user_review_date == NEVER and \
+           last_user_commit_date == NEVER:
+            continue
+
         last_user_activity = max([
             last_user_comment_date,
-            last_user_review_date
+            last_user_review_date,
+            last_user_commit_date
         ])
 
-        # print out new comments since last user activity
+        #  Collect new comments since last user activity
         new_comments = [x for x in comments if x['date'] > last_user_activity]
         for comment in new_comments:
             report_entry['new_comments'].append({
@@ -131,11 +146,7 @@ def make_report(user, client, prs_with_reviews):
                 'text': comment['text']
             })
 
-        # Get user email so we could filter out new commits by this user
-        user_info_raw = client.get_user_info(user)
-        user_email = user_info_raw['email']
-
-        # print new commits since last activity
+        # Collect new commits since last activity
         new_commits = [x for x in commits
                        if x['date'] > last_user_activity and
                        x['user_email'] != user_email]
