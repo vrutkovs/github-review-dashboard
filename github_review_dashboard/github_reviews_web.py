@@ -2,6 +2,7 @@
 from aiohttp import web, MsgType, WSCloseCode
 import aiohttp_jinja2
 import jinja2
+import json
 
 import github_reviews
 
@@ -31,11 +32,14 @@ async def ws(request):
     async for msg in ws:
         if msg.tp == MsgType.text:
             for item in github_reviews.make_report(user, client, prs):
-                data = {'item': item}
-                response = aiohttp_jinja2.render_template('card.jinja2',
-                                                          request, data)
-                ws.send_str(response.text)
-            ws.send_str("end")
+                if 'progress' in item:
+                    ws.send_str(json.dumps(item))
+                else:
+                    data = {'item': item}
+                    response = aiohttp_jinja2.render_template('card.jinja2',
+                                                              request, data)
+                    ws.send_str(response.text)
+            ws.send_str('{"end": true}')
     return ws
 
 

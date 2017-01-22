@@ -17,6 +17,12 @@
 
   <a class="github-fork-ribbon" href="https://github.com/vrutkovs/github-review-dashboard" title="Fork me on GitHub" target="_blank">Fork me on GitHub</a>
   <h1 id="headline" class="text-center">Building a PR review queue for {{user}}, please wait...</h1>
+
+  <div id="progressbar-container" class="progress progress-xs">
+    <div class="progress-bar" role="progressbar" id="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+    </div>
+  </div>
+
   <div id='cards' class="container-fluid container-cards-pf">
   </div>
 
@@ -28,28 +34,38 @@
       var row_obj;
       var sock = new WebSocket('ws://' + window.location.host + '{{ws_url}}')
       sock.onmessage = function(event) {
-        if (event.data != 'end') {
+        try {
+          dta = $.parseJSON(event.data);
+          if ('progress' in dta) {
+            // Update progress bar
+            $("#progressbar").css("width", dta.progress+"%");
+
+          } else if ('end' in dta) {
+            // Change the headline when loading is done
+            if (card_id == 0) {
+              $('#headline').text('PR review queue is empty. Good job!');
+            } else {
+              $('#headline').text('PR review queue for {{user}}');
+            }
+            $("#progressbar-container").hide();
+          }
+
+        } catch (e) {
+          // If the sent data is not JSON - add this as a card
           if (Math.floor(card_id / 2) != row_id) {
             row_obj = $('#cards').append(row_str = '<div class="row row-cards-pf">');
             row_id++;
           }
           row_obj.append(event.data);
           card_id++;
-        } else {
-          // Chnage the headline when loading is done
-          if (card_id == 0) {
-            $('#headline').text('PR review queue is empty. Good job!');
-          } else {
-            $('#headline').text('PR review queue for {{user}}');
 
-            // Open PR link when a card is clicked
-            $(".card-pf").click(function(e){
-              var target = e.target;
-              if ($(target).not('a')) {
-                window.open($(this).data("link"));
-              }
-            });
-          }
+          // Open PR link when a card is clicked
+          $(".card-pf").click(function(e){
+            var target = e.target;
+            if ($(target).not('a')) {
+              window.open($(this).data("link"));
+            }
+          });
         }
       };
       sock.onopen = function(){

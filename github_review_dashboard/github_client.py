@@ -6,6 +6,7 @@ import re
 class GithubClient():
     def __init__(self, token=None):
         self.token = token
+        self.total_count = 0
         self.session = requests.Session()
         if token:
             self.session.headers['Authorization'] = 'token {token}'.format(token=token)
@@ -15,7 +16,7 @@ class GithubClient():
         tmpl = "https://api.github.com/search/issues"\
                "?q=involves%3A{username}%20state%3Aopen%20type%3Apr&per_page=100"
         url = tmpl.format(username=username)
-        return self._paginated_getter(url, subkey='items')
+        return self._paginated_getter(url, subkey='items', set_total_count=True)
 
     def get_user_info(self, username):
         tmpl = "https://api.github.com/users/{username}"
@@ -53,7 +54,7 @@ class GithubClient():
     def _getter(self, url):
         return self.json_response(self.session.get(url))
 
-    def _paginated_getter(self, url, subkey=None):
+    def _paginated_getter(self, url, subkey=None, set_total_count=False):
         """ Pagination utility.  Obnoxious. """
 
         results = []
@@ -62,6 +63,11 @@ class GithubClient():
         while 'next' in link:
             response = self.session.get(link['next'])
             json_res = self.json_response(response)
+
+            if set_total_count:
+                # Set client's 'total_count' var so we could display a
+                # progress bar
+                self.total_count = json_res['total_count']
 
             if subkey is not None:
                 json_res = json_res[subkey]

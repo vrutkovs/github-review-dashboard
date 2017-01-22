@@ -84,7 +84,14 @@ def prepare_report(user):
 
 
 def make_report(user, client, prs_with_reviews):
-    for pr_data in prs_with_reviews:
+    total_prs = None
+    for i, pr_data in enumerate(prs_with_reviews):
+        if not total_prs:
+            total_prs = client.total_count
+
+        progress = int(((i+1) / total_prs) * 100)
+        yield {'progress': progress}
+
         pr_link, owner, repo, number, pr_reviews_raw = pr_data
 
         pr_info_raw = client.get_pr(owner, repo, number)
