@@ -154,7 +154,8 @@ def make_report(user, client, prs_with_reviews):
             report_entry['new_commits'].append({
                 'hash': commit['hash'],
                 'user': commit['user'],
-                'message': commit['message']
+                'message': commit['message'],
+                'date': commit['date']
             })
 
         # Skip PR if no new comments/commits available

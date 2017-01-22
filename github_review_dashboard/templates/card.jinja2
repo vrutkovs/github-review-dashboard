@@ -39,8 +39,7 @@
         New commits:<br/>
         {% for commit in item.new_commits %}
         <div class="card-pf-item-text">
-          <!-- TODO: make proper link here -->
-          {{ commit.hash }} by <strong>{{ commit.user }}</strong>
+          {{ commit.hash }} by <strong>{{ commit.user }}</strong> at {{ commit.date.strftime('%Y-%m-%d %H:%M')}}
           <p>{{commit.message}}</p>
         </div>
         {% endfor %}
