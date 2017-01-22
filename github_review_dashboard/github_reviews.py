@@ -110,11 +110,12 @@ def make_report(user, client, prs_with_reviews):
             pr_review_result = review_results[pr_reviewer]['state']
             report_entry['pr_reviews'][pr_reviewer] = pr_review_result
 
-        # Find last user comment or review
+        last_user_review_date = review_results.get(user, {}).get('date', None) or NEVER
+
+        # Find last user comment
         user_comments = filter(lambda x: x['user'] == user, comments)
         sorted_user_comments = sorted(user_comments, key=lambda x: x['date'])
         last_user_comment_date = sorted_user_comments[-1]['date'] if sorted_user_comments else NEVER
-        last_user_review_date = review_results.get(user, {}).get('date', None) or NEVER
 
         # Get user email so we could filter out new commits by this user
         user_info_raw = client.get_user_info(user)
