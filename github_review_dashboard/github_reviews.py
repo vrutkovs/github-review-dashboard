@@ -34,8 +34,7 @@ def get_prs(client, user):
 def get_pr_reviews(pr_reviews_raw):
     review_results = {}
     pr_reviews_sorted = sorted(pr_reviews_raw,
-                               key=lambda x: dateutil.parser.parse(x['submitted_at']),
-                               reverse=True)
+                               key=lambda x: dateutil.parser.parse(x['submitted_at']))
     for pr_review in pr_reviews_sorted:
         user = pr_review['user']['login']
 
