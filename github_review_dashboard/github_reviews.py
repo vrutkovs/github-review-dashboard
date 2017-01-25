@@ -25,7 +25,7 @@ def get_prs(client, user):
     pr_links = sorted([x['html_url'] for x in raw_prs])
 
     for pr_link in pr_links:
-        owner, repo, number = client.get_pr_info_from_link(pr_link)
+        owner, repo, number = GithubClient.get_pr_info_from_link(pr_link)
 
         pr_reviews_raw = client.get_pr_reviews(owner, repo, number)
         yield (pr_link, owner, repo, number, pr_reviews_raw)
