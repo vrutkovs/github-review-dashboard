@@ -43,7 +43,8 @@ class GithubClient():
         url = tmpl.format(owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
-    def get_pr_info_from_link(self, pr_link):
+    @staticmethod
+    def get_pr_info_from_link(pr_link):
         try:
             repo_match = re.search('https://github.com/(\S+)/(\S+)/pull/(\d+)', pr_link)
             return repo_match.groups()
