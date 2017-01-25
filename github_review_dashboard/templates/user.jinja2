@@ -60,7 +60,7 @@
           card_id++;
 
           // Open PR link when a card is clicked
-          $(".card-pf").click(function(e){
+          $(".card-pf").unbind('click').click(function(e){
             var target = e.target;
             if ($(target).not('a')) {
               window.open($(this).data("link"));
