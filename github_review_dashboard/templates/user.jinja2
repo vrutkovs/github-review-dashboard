@@ -48,6 +48,13 @@
               $('#headline').text('PR review queue for {{user}}');
             }
             $("#progressbar-container").hide();
+            // Open PR link when a card is clicked
+            $(".card-pf").click(function(e){
+              var target = e.target;
+              if ($(target).not('a')) {
+                window.open($(this).data("link"));
+              }
+            });
           }
 
         } catch (e) {
@@ -58,14 +65,6 @@
           }
           row_obj.append(event.data);
           card_id++;
-
-          // Open PR link when a card is clicked
-          $(".card-pf").click(function(e){
-            var target = e.target;
-            if ($(target).not('a')) {
-              window.open($(this).data("link"));
-            }
-          });
         }
       };
       sock.onopen = function(){
