@@ -40,7 +40,7 @@ def get_pr_reviews(pr_reviews_raw):
 
         # Don't replace approved/changes_required with 'commented'
         # Github API quirk probably
-        existing_review = review_results.get(user, {}).get('state', None)
+        existing_review = review_results.get(user, {}).get('state')
         if existing_review in ['APPROVED', 'CHANGES_REQUESTED'] and \
            pr_review['state'] == 'COMMENTED':
             continue
@@ -117,7 +117,7 @@ def make_report(user, client, prs_with_reviews):
             pr_review_result = review_results[pr_reviewer]['state']
             report_entry['pr_reviews'][pr_reviewer] = pr_review_result
 
-        last_user_review_date = review_results.get(user, {}).get('date', None) or NEVER
+        last_user_review_date = review_results.get(user, {}).get('date') or NEVER
 
         # Find last user comment
         user_comments = filter(lambda x: x['user'] == user, comments)
