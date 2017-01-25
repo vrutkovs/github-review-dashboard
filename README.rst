@@ -10,6 +10,9 @@ Github Review Dashboard
      :target: https://pyup.io/repos/github/vrutkovs/github-review-dashboard/
      :alt: Updates
 
+.. image:: https://www.quantifiedcode.com/api/v1/project/f7feefcebef94d41a5ece3d8e8c66a2f/badge.svg
+     :target: https://www.quantifiedcode.com/app/project/f7feefcebef94d41a5ece3d8e8c66a2f
+     :alt: Code issues
 
 Github Review Dashboard is a tool to show the PRs user is involved and their status
 
