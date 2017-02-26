@@ -16,6 +16,6 @@
     "tests"
   ],
   "dependencies": {
-    "patternfly": "^3.18.1"
+    "patternfly": "^3.21.0"
   }
 }
