@@ -14,9 +14,11 @@ Github Review Dashboard
      :target: https://www.quantifiedcode.com/app/project/f7feefcebef94d41a5ece3d8e8c66a2f
      :alt: Code issues
 
-Github Review Dashboard is a tool to show the PRs user is involved and their status
+Github Review Dashboard shows PRs which were updated since last user commit, comment or review.
 
-* Free software: MIT license
+Try it out on http://github-review.aracan.ga/
+
+License: MIT
 
 
 How to Run

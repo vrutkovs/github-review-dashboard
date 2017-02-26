@@ -44,7 +44,7 @@ class GithubClient():
         return self._paginated_getter(url)
 
     @staticmethod
-    def get_pr_info_from_link(self, pr_link):
+    def get_pr_info_from_link(pr_link):
         try:
             repo_match = re.search('https://github.com/(\S+)/(\S+)/pull/(\d+)', pr_link)
             return repo_match.groups()
