@@ -1,8 +1,9 @@
 FROM fedora:26
 
-RUN dnf update -y && \
+RUN dnf update -y --refresh && \
     dnf install -y python3-pip git npm && \
-    git clone https://github.com/vrutkovs/github-review-dashboard /dash && \
+
+RUN git clone https://github.com/vrutkovs/github-review-dashboard /dash && \
     cd /dash && \
     pip3 install -r requirements.txt && \
     npm install -g bower && \
