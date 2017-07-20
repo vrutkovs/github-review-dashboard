@@ -5,8 +5,9 @@ RUN dnf update -y --refresh && \
     dnf clean all && \
     npm install -g bower
 
-RUN git clone https://github.com/vrutkovs/github-review-dashboard /dash && \
-    cd /dash && \
+ADD . /dash
+
+RUN cd /dash && \
     pip3 install -r requirements.txt && \
     bower install --allow-root && \
     git log -1 --pretty=format:'%h' --abbrev-commit > github_review_dashboard/templates/commit.jinja2
