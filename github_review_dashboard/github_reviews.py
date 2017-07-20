@@ -2,11 +2,23 @@
 import dateutil.parser
 import datetime
 import os
+import logging
+import sys
 
 from dateutil.tz import tzutc
 
 from github_client import GithubClient
 
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    '%(name)-25s: %(filename)s:%(lineno)-3d: %(message)s')
+ch.setFormatter(formatter)
+root.addHandler(ch)
+logger = logging.getLogger('github_reviews')
 
 NEVER = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
 
@@ -21,26 +33,34 @@ else:
 
 
 def get_prs(client, user):
+    logger.debug("get_prs for user {}".format(user))
     raw_prs = client.get_involved_pull_requests(user)
     pr_links = sorted([x['html_url'] for x in raw_prs])
+    logger.debug("pr_links: {}".format(pr_links))
 
     for pr_link in pr_links:
         owner, repo, number = GithubClient.get_pr_info_from_link(pr_link)
+        logger.debug("pr_links {}, owner {}, repo {}, number {}".format(
+            pr_link, owner, repo, number))
 
         pr_reviews_raw = client.get_pr_reviews(owner, repo, number)
         yield (pr_link, owner, repo, number, pr_reviews_raw)
 
 
 def get_pr_reviews(pr_reviews_raw):
+    logger.debug("get_pr_reviews")
     review_results = {}
     pr_reviews_sorted = sorted(pr_reviews_raw,
                                key=lambda x: dateutil.parser.parse(x['submitted_at']))
     for pr_review in pr_reviews_sorted:
         user = pr_review['user']['login']
+        logger.debug("pr for user {} with state {}".format(
+            user, pr_review['state']))
 
         # Don't replace approved/changes_required with 'commented'
         # Github API quirk probably
         existing_review = review_results.get(user, {}).get('state')
+        logger.debug("pr state {}".format(existing_review))
         if existing_review in ['APPROVED', 'CHANGES_REQUESTED'] and \
            pr_review['state'] == 'COMMENTED':
             continue
@@ -49,6 +69,7 @@ def get_pr_reviews(pr_reviews_raw):
             'state': pr_review['state'],
             'date': dateutil.parser.parse(pr_review['submitted_at'])
         }
+    logger.debug(review_results)
     return review_results
 
 
@@ -93,6 +114,7 @@ def make_report(user, client, prs_with_reviews):
         yield {'progress': progress}
 
         pr_link, owner, repo, number, pr_reviews_raw = pr_data
+        logger.debug("pr_link {}".format(pr_link))
 
         pr_info_raw = client.get_pr(owner, repo, number)
 
@@ -123,6 +145,7 @@ def make_report(user, client, prs_with_reviews):
         user_comments = filter(lambda x: x['user'] == user, comments)
         sorted_user_comments = sorted(user_comments, key=lambda x: x['date'])
         last_user_comment_date = sorted_user_comments[-1]['date'] if sorted_user_comments else NEVER
+        logger.debug("last_user_comment_date {}".format(last_user_comment_date))
 
         # Get user email so we could filter out new commits by this user
         user_info_raw = client.get_user_info(user)
@@ -131,6 +154,7 @@ def make_report(user, client, prs_with_reviews):
         user_commits = filter(lambda x: x['user_email'] == user_email, commits)
         sorted_user_commits = sorted(user_commits, key=lambda x: x['date'])
         last_user_commit_date = sorted_user_commits[-1]['date'] if sorted_user_commits else NEVER
+        logger.debug("last_user_commit_date {}".format(last_user_commit_date))
 
         # If last activity date cannot be found the PR should be skipped
         if last_user_comment_date == NEVER and \
@@ -143,6 +167,7 @@ def make_report(user, client, prs_with_reviews):
             last_user_review_date,
             last_user_commit_date
         ])
+        logger.debug("last_user_activity {}".format(last_user_activity))
 
         #  Collect new comments since last user activity
         new_comments = [x for x in comments if x['date'] > last_user_activity]
@@ -152,6 +177,7 @@ def make_report(user, client, prs_with_reviews):
                 'user': comment['user'],
                 'text': comment['text']
             })
+        logger.debug("new_comments {}".format(new_comments))
 
         # Collect new commits since last activity
         new_commits = [x for x in commits
@@ -164,6 +190,7 @@ def make_report(user, client, prs_with_reviews):
                 'message': commit['message'],
                 'date': commit['date']
             })
+        logger.debug("new_commits {}".format(new_commits))
 
         # Skip PR if no new comments/commits available
         if report_entry['new_commits'] or report_entry['new_commits']:
