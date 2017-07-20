@@ -192,5 +192,5 @@ def make_report(user, client, prs_with_reviews):
         logger.debug("new_commits {}".format(new_commits))
 
         # Skip PR if no new comments/commits available
-        if report_entry['new_commits'] or report_entry['new_commits']:
+        if report_entry['new_comments'] or report_entry['new_commits']:
             yield report_entry
