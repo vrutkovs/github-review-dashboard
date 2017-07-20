@@ -1,7 +1,7 @@
 FROM fedora:26
 
 RUN dnf update -y --refresh && \
-    dnf install -y python3-pip git npm && \
+    dnf install -y git npm && \
     dnf clean all && \
     npm install -g bower
 
