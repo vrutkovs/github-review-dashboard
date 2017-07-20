@@ -19,9 +19,9 @@ install:
 script: "python setup.py test"
 
 after_success:
-  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then
-    docker build -t vrutkovs/github_review_dashboard . && 
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" && 
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+    docker build -t vrutkovs/github_review_dashboard . &&
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" &&
     docker push vrutkovs/github_review_dashboard;
     fi
 
@@ -33,4 +33,4 @@ deploy:
   on:
     tags: true
     repo: vrutkovs/github-review-dashboard
-    condition: $TRAVIS_PYTHON_VERSION == "3.5"
+    condition: $TRAVIS_PYTHON_VERSION == "3.6"
