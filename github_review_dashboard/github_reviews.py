@@ -114,7 +114,7 @@ def make_report(user, client, prs_with_reviews):
         yield {'progress': progress}
 
         pr_link, owner, repo, number, pr_reviews_raw = pr_data
-        logger.debug("pr_link {}".format(pr_link))
+        logger.debug("PR {}".format(pr_link))
 
         pr_info_raw = client.get_pr(owner, repo, number)
 
