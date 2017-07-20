@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from aiohttp import web, MsgType, WSCloseCode
+from aiohttp import web, WSMsgType, WSCloseCode
 import aiohttp_jinja2
 import jinja2
 import json
@@ -30,7 +30,7 @@ async def ws(request):
     (client, prs) = github_reviews.prepare_report(user)
 
     async for msg in ws:
-        if msg.tp == MsgType.text:
+        if msg.tp == WSMsgType.text:
             for item in github_reviews.make_report(user, client, prs):
                 if 'progress' in item:
                     ws.send_str(json.dumps(item))
