@@ -2,13 +2,13 @@ FROM fedora:26
 
 RUN dnf update -y --refresh && \
     dnf install -y python3-pip git npm && \
+    dnf clean all && \
+    npm install -g bower
 
 RUN git clone https://github.com/vrutkovs/github-review-dashboard /dash && \
     cd /dash && \
     pip3 install -r requirements.txt && \
-    npm install -g bower && \
     bower install --allow-root && \
-    dnf clean all && \
     git log -1 --pretty=format:'%h' --abbrev-commit > github_review_dashboard/templates/commit.jinja2
 
 WORKDIR /dash/github_review_dashboard
