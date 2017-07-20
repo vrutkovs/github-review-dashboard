@@ -181,8 +181,7 @@ def make_report(user, client, prs_with_reviews):
 
         # Collect new commits since last activity
         new_commits = [x for x in commits
-                       if x['date'] > last_user_activity and
-                       x['user_email'] != user_email]
+                       if x['date'] > last_user_activity]
         for commit in new_commits:
             report_entry['new_commits'].append({
                 'hash': commit['hash'],
