@@ -19,7 +19,7 @@ class GithubClient():
         url = tmpl.format(username=username)
         return self._paginated_getter(url, subkey='items', set_total_count=True)
 
-    @lru_cache(maxsize=32)
+    @lru_cache(maxsize=64)
     def get_user_info(self, username):
         tmpl = "https://api.github.com/users/{username}"
         url = tmpl.format(username=username)
@@ -45,13 +45,13 @@ class GithubClient():
         url = tmpl.format(owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
-    @lru_cache(maxsize=32)
     def get_pr_review_requests(self, owner, repo, number):
         tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/requested_reviewers"
         url = tmpl.format(owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
     @staticmethod
+    @lru_cache(maxsize=64)
     def get_pr_info_from_link(pr_link):
         try:
             repo_match = re.search('https://github.com/(\S+)/(\S+)/pull/(\d+)', pr_link)
