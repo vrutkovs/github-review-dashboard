@@ -35,7 +35,9 @@ else:
 def get_prs(client, user):
     logger.debug("get_prs for user {}".format(user))
     raw_prs = client.get_involved_pull_requests(user)
-    pr_links = sorted([x['html_url'] for x in raw_prs])
+    # Sort PRs by date - most likely the newest were not reviewed
+    sorted_prs = sorted(raw_prs, key=lambda x: dateutil.parser.parse(x['updated_at']), reverse=True)
+    pr_links = [x['html_url'] for x in sorted_prs]
     logger.debug("pr_links: {}".format(pr_links))
 
     for pr_link in pr_links:
