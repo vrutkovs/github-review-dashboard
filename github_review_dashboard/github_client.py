@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import re
+from functools import lru_cache
 
 
 class GithubClient():
@@ -18,6 +19,7 @@ class GithubClient():
         url = tmpl.format(username=username)
         return self._paginated_getter(url, subkey='items', set_total_count=True)
 
+    @lru_cache(maxsize=32)
     def get_user_info(self, username):
         tmpl = "https://api.github.com/users/{username}"
         url = tmpl.format(username=username)
@@ -43,6 +45,7 @@ class GithubClient():
         url = tmpl.format(owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
+    @lru_cache(maxsize=32)
     @staticmethod
     def get_pr_info_from_link(pr_link):
         try:
