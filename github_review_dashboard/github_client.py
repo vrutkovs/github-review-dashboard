@@ -46,6 +46,11 @@ class GithubClient():
         return self._paginated_getter(url)
 
     @lru_cache(maxsize=32)
+    def get_pr_review_requests(self, owner, repo, number):
+        tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/requested_reviewers"
+        url = tmpl.format(owner=owner, repo=repo, number=number)
+        return self._paginated_getter(url)
+
     @staticmethod
     def get_pr_info_from_link(pr_link):
         try:

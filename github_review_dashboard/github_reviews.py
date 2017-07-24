@@ -75,6 +75,11 @@ def get_pr_reviews(pr_reviews_raw):
     return review_results
 
 
+def get_pr_review_requests(client, owner, repo, number):
+    requests_raw = client.get_pr_review_requests(owner, repo, number)
+    return [x['login'] for x in requests_raw]
+
+
 def get_pr_comments(client, owner, repo, number):
     comments = []
     comments_raw = client.get_pr_comments(owner, repo, number)
@@ -120,6 +125,7 @@ def make_report(user, client, prs_with_reviews):
 
         pr_info_raw = client.get_pr(owner, repo, number)
 
+        review_requested_from_users = get_pr_review_requests(client, owner, repo, number)
         review_results = get_pr_reviews(pr_reviews_raw)
         comments = get_pr_comments(client, owner, repo, number)
         commits = get_pr_commits(client, owner, repo, number)
@@ -136,10 +142,18 @@ def make_report(user, client, prs_with_reviews):
             'new_commits': []
         }
 
+        # If user was explicitely requested to review it - show it
+        user_was_requested_to_review = user in review_requested_from_users
+
         # Print others review state
         for pr_reviewer in review_results:
             pr_review_result = review_results[pr_reviewer]['state']
             report_entry['pr_reviews'][pr_reviewer] = pr_review_result
+
+        # Add requests from other users unless there is a review set by them there already
+        for pr_review_request in review_requested_from_users:
+            if pr_review_request not in report_entry['pr_reviews'].keys():
+                report_entry['pr_reviews'][pr_review_request] = 'REVIEW_REQUESTED'
 
         last_user_review_date = review_results.get(user, {}).get('date') or NEVER
 
@@ -159,7 +173,8 @@ def make_report(user, client, prs_with_reviews):
         logger.debug("last_user_commit_date {}".format(last_user_commit_date))
 
         # If last activity date cannot be found the PR should be skipped
-        if last_user_comment_date == NEVER and \
+        if not user_was_requested_to_review and \
+           last_user_comment_date == NEVER and \
            last_user_review_date == NEVER and \
            last_user_commit_date == NEVER:
             continue
@@ -194,5 +209,7 @@ def make_report(user, client, prs_with_reviews):
         logger.debug("new_commits {}".format(new_commits))
 
         # Skip PR if no new comments/commits available
-        if report_entry['new_comments'] or report_entry['new_commits']:
+        if user_was_requested_to_review or \
+           report_entry['new_comments'] or \
+           report_entry['new_commits']:
             yield report_entry
