@@ -13,9 +13,10 @@ async def root(request):
 
 @aiohttp_jinja2.template('user.jinja2')
 async def user_report(request):
+    user = request.match_info['user']
     return {
-        'user': request.match_info['user'],
-        'ws_url': request.app.router['ws'].url_for(),
+        'user': user,
+        'ws_url': request.app.router['ws'].url_for(user=user),
     }
 
 
