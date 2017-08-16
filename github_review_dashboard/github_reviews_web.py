@@ -13,12 +13,9 @@ async def root(request):
 
 @aiohttp_jinja2.template('user.jinja2')
 async def user_report(request):
-    user = request.match_info['user']
-    # TODO: read this from request.app.router
-    ws_url = '/{user}/ws'.format(user=user)
     return {
-        'user': user,
-        'ws_url': ws_url,
+        'user': request.match_info['user'],
+        'ws_url': request.app.router['ws'].url_for(),
     }
 
 
@@ -54,7 +51,7 @@ app.router.add_static('/static/', path='static', show_index=True)
 
 app.router.add_route('*', '/', root)
 app.router.add_route('GET', '/{user}', user_report)
-app.router.add_route('*', '/{user}/ws', ws)
+app.router.add_route('*', '/{user}/ws', ws, name='ws')
 
 app['websockets'] = []
 app.on_shutdown.append(on_shutdown)
