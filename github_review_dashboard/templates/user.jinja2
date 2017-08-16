@@ -32,7 +32,8 @@
       var row_id = -1;
       var card_id = 0;
       var row_obj;
-      var sock = new WebSocket('ws://' + window.location.host + '{{ws_url}}')
+      var ws_proto = 'https:' == document.location.protocol ? 'wss://': 'ws://'
+      var sock = new WebSocket(ws_proto + window.location.host + '{{ws_url}}')
       sock.onmessage = function(event) {
         try {
           dta = $.parseJSON(event.data);
