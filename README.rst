@@ -16,7 +16,7 @@ Github Review Dashboard
 
 Github Review Dashboard shows PRs which were updated since last user commit, comment or review.
 
-Try it out on http://github-review.aracan.ga/
+Try it out on https://github-review.aracan.ga/
 
 License: MIT
 
@@ -34,4 +34,3 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-
