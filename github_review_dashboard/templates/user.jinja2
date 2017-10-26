@@ -13,6 +13,14 @@
 </head>
 
 <body class="cards-pf container-cards-pf">
+
+  <!-- render a sample card in a hidden container to preload classes and fonts -->
+  <div style="display: none">
+    {% with item={'pr_reviews': {'a': 'b'} } %}
+      {% include 'card.jinja2' %}
+    {% endwith %}
+  </div>
+
   <small class="text-muted">{% include 'commit.jinja2' %}</small>
 
   <a class="github-fork-ribbon" href="https://github.com/vrutkovs/github-review-dashboard" title="Fork me on GitHub" target="_blank">Fork me on GitHub</a>
