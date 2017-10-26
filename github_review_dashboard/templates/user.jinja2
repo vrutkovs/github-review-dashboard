@@ -32,15 +32,30 @@
       var row_id = -1;
       var card_id = 0;
       var row_obj;
-      var ws_proto = 'https:' == document.location.protocol ? 'wss://': 'ws://'
-      var sock = new WebSocket(ws_proto + window.location.host + '{{ws_url}}')
-      sock.onmessage = function(event) {
+
+      var evtSource = new EventSource("{{ws_url}}");
+      evtSource.onmessage = function(event) {
         try {
           dta = $.parseJSON(event.data);
           if ('progress' in dta) {
             // Update progress bar
             $("#progressbar").css("width", dta.progress+"%");
 
+          } else if ('card' in dta) {
+            if (Math.floor(card_id / 2) != row_id) {
+              row_obj = $('#cards').append(row_str = '<div class="row row-cards-pf">');
+              row_id++;
+            }
+            row_obj.append(dta['card']);
+            card_id++;
+
+            // Open PR link when a card is clicked
+            $(".card-pf").unbind('click').click(function(e){
+              var target = e.target;
+              if ($(target).not('a')) {
+                window.open($(this).data("link"));
+              }
+            });
           } else if ('end' in dta) {
             // Change the headline when loading is done
             if (card_id == 0) {
@@ -49,28 +64,11 @@
               $('#headline').text('PR review queue for {{user}}');
             }
             $("#progressbar-container").hide();
+            event.target.close();
           }
-
         } catch (e) {
-          // If the sent data is not JSON - add this as a card
-          if (Math.floor(card_id / 2) != row_id) {
-            row_obj = $('#cards').append(row_str = '<div class="row row-cards-pf">');
-            row_id++;
-          }
-          row_obj.append(event.data);
-          card_id++;
-
-          // Open PR link when a card is clicked
-          $(".card-pf").unbind('click').click(function(e){
-            var target = e.target;
-            if ($(target).not('a')) {
-              window.open($(this).data("link"));
-            }
-          });
+          console.log(e)
         }
-      };
-      sock.onopen = function(){
-        sock.send("ready");
       };
     });
   </script>

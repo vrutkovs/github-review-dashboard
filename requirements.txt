@@ -1,4 +1,5 @@
 aiohttp==2.2.5
+aiohttp-sse==1.1.0
 aiohttp_jinja2==0.13.0
 python-dateutil==2.6.1
 requests==2.18.4
