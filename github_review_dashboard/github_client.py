@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import re
+import urllib.parse
 from functools import lru_cache
 
 
@@ -17,9 +18,11 @@ class GithubClient():
             'application/vnd.github.black-cat-preview+json'
 
     def get_involved_pull_requests(self, username):
-        tmpl = "{prefix}/search/issues"\
-               "?q=involves%3A{}%20state%3Aopen%20type%3Apr&per_page=100"
-        url = tmpl.format(prefix=self.api_prefix, username)
+        tmpl = "{prefix}/search/issues?{query}"
+        query = {
+            'q': 'involves:{} state:open type:pr'.format(username),
+            'per_page': 100}
+        tmpl.format(prefix=self.api_prefix, query=urllib.parse.quote(q))
         return self._paginated_getter(url, subkey='items',
                                       set_total_count=True)
 
