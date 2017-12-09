@@ -78,7 +78,7 @@ def get_pr_reviews(pr_reviews_raw):
 
 
 def get_pr_review_reqs(client, owner, repo, number):
-    requests_raw = client.get_pr_review_reqs(owner, repo, number)
+    requests_raw = client.get_pr_review_requests(owner, repo, number)
     return [x['login'] for x in requests_raw]
 
 
