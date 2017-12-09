@@ -1,3 +1,5 @@
 pip==9.0.1
 flake8==3.5.0
 ipdb==0.10.3
+mypy==0.550
+pyannotate==1.0.2

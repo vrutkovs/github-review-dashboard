@@ -1,12 +1,13 @@
 FROM fedora:27
 
+ARG DEBUG
+
 RUN dnf update -y --refresh && \
     dnf install -y git npm && \
+    if [ -n $DEBUG ]; then dnf install -y python3-devel gcc redhat-rpm-config; fi && \
     dnf clean all
 
 ADD . /dash
-
-ARG DEBUG
 
 RUN cd /dash && \
     npm install patternfly@3.30.1 --save --prefix=github_review_dashboard/static && \
