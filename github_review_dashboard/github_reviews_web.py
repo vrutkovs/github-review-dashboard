@@ -5,7 +5,7 @@ import aiohttp_jinja2
 import jinja2
 import json
 
-import github_reviews
+import github_review_dashboard.github_reviews
 
 
 async def root(request):

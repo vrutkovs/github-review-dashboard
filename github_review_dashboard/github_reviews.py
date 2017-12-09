@@ -7,7 +7,7 @@ import sys
 
 from dateutil.tz import tzutc
 
-from github_client import GithubClient
+from github_review_dashboard.github_client import GithubClient
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)

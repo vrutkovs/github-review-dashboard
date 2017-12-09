@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-from github_reviews import make_report
+from github_review_dashboard.github_reviews import make_report
 
 if len(sys.argv) < 2:
     raise RuntimeError("Specify a username as a parameter")
