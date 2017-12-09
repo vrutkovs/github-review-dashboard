@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
-from github_review_dashboard.github_reviews import make_report
+from github_review_dashboard.github_reviews import make_report, prepare_report
 
 if len(sys.argv) < 2:
     raise RuntimeError("Specify a username as a parameter")
 
 user = sys.argv[1]
 
-report = make_report(user)
+(client, prs) = prepare_report(user)
+report = make_report(user, client, prs)
 
 for entry in report:
     print("------")
