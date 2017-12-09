@@ -1,4 +1,4 @@
-FROM fedora:26
+FROM fedora:27
 
 RUN dnf update -y --refresh && \
     dnf install -y git npm && \
