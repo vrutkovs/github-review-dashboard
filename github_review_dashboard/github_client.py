@@ -4,6 +4,9 @@ import re
 import urllib.parse
 from functools import lru_cache
 
+# Types
+from typing import List
+
 
 class GithubClient():
     api_prefix = "https://api.github.com"
@@ -81,7 +84,7 @@ class GithubClient():
     def _paginated_getter(self, url, subkey=None, set_total_count=False):
         """ Pagination utility.  Obnoxious. """
 
-        results = []
+        results: List[str] = []
         link = dict(next=url)
 
         while 'next' in link:

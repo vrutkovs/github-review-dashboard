@@ -9,6 +9,10 @@ from dateutil.tz import tzutc
 
 from github_review_dashboard.github_client import GithubClient
 
+# Types
+from typing import Dict, Any
+
+
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
 
@@ -51,7 +55,7 @@ def get_prs(client, user):
 
 def get_pr_reviews(pr_reviews_raw):
     logger.debug("get_pr_reviews")
-    review_results = {}
+    review_results: Dict[str, Dict[str, Any]] = {}
     pr_reviews_sorted = sorted(pr_reviews_raw,
                                key=lambda x:
                                dateutil.parser.parse(x['submitted_at']))
@@ -72,7 +76,7 @@ def get_pr_reviews(pr_reviews_raw):
             'state': pr_review['state'],
             'date': dateutil.parser.parse(pr_review['submitted_at'])
         }
-    logger.debug(review_results)
+    logger.debug(str(review_results))
     return review_results
 
 
