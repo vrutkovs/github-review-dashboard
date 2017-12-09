@@ -38,12 +38,17 @@ async def ws(request):
     return ws
 
 
-app = web.Application(debug=True)
-aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
-app.router.add_static('/static/', path='static', show_index=True)
+def main():
+    app = web.Application(debug=True)
+    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
+    app.router.add_static('/static/', path='static', show_index=True)
 
-app.router.add_route('*', '/', root)
-app.router.add_route('GET', '/{user}', user_report)
-app.router.add_route('GET', '/{user}/ws', ws, name='ws')
+    app.router.add_route('*', '/', root)
+    app.router.add_route('GET', '/{user}', user_report)
+    app.router.add_route('GET', '/{user}/ws', ws, name='ws')
 
-web.run_app(app)
+    web.run_app(app)
+
+
+if __name__ == '__main__':
+    main()
