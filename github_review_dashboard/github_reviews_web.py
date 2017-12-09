@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from aiohttp import web
+from pyannotate_runtime import collect_types
 from aiohttp_sse import sse_response
 import aiohttp_jinja2
 import jinja2
@@ -38,6 +39,14 @@ async def ws(request):
     return ws
 
 
+async def start_pyannotate(app):
+    collect_types.resume()
+
+
+async def finish_pyannotate(app):
+    collect_types.pause()
+
+
 def main():
     app = web.Application(debug=True)
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
@@ -47,8 +56,14 @@ def main():
     app.router.add_route('GET', '/{user}', user_report)
     app.router.add_route('GET', '/{user}/ws', ws, name='ws')
 
+    if os.environ["DEBUG"]:
+        app.on_startup.append(start_pyannotate)
+        app.on_cleanup.append(finish_pyannotate)
+
     web.run_app(app)
 
 
 if __name__ == '__main__':
+    collect_types.init_types_collection()
     main()
+    collect_types.dump_stats('type_info.json')
