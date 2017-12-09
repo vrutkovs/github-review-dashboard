@@ -36,7 +36,8 @@ def get_prs(client, user):
     logger.debug("get_prs for user {}".format(user))
     raw_prs = client.get_involved_pull_requests(user)
     # Sort PRs by date - most likely the newest were not reviewed
-    sorted_prs = sorted(raw_prs, key=lambda x: dateutil.parser.parse(x['updated_at']), reverse=True)
+    sorted_prs = sorted(raw_prs, reverse=True,
+                        key=lambda x: dateutil.parser.parse(x['updated_at']))
     pr_links = [x['html_url'] for x in sorted_prs]
     logger.debug("pr_links: {}".format(pr_links))
 
@@ -53,7 +54,8 @@ def get_pr_reviews(pr_reviews_raw):
     logger.debug("get_pr_reviews")
     review_results = {}
     pr_reviews_sorted = sorted(pr_reviews_raw,
-                               key=lambda x: dateutil.parser.parse(x['submitted_at']))
+                               key=lambda x:
+                               dateutil.parser.parse(x['submitted_at']))
     for pr_review in pr_reviews_sorted:
         user = pr_review['user']['login']
         logger.debug("pr for user {} with state {}".format(
@@ -75,8 +77,8 @@ def get_pr_reviews(pr_reviews_raw):
     return review_results
 
 
-def get_pr_review_requests(client, owner, repo, number):
-    requests_raw = client.get_pr_review_requests(owner, repo, number)
+def get_pr_review_reqs(client, owner, repo, number):
+    requests_raw = client.get_pr_review_reqs(owner, repo, number)
     return [x['login'] for x in requests_raw]
 
 
@@ -117,7 +119,7 @@ def make_report(user, client, prs_with_reviews):
         if not total_prs:
             total_prs = client.total_count
 
-        progress = int(((i+1) / total_prs) * 100)
+        progress = int(((i + 1) / total_prs) * 100)
         yield {'progress': progress}
 
         pr_link, owner, repo, number, pr_reviews_raw = pr_data
@@ -125,7 +127,8 @@ def make_report(user, client, prs_with_reviews):
 
         pr_info_raw = client.get_pr(owner, repo, number)
 
-        review_requested_from_users = get_pr_review_requests(client, owner, repo, number)
+        review_requested_from_users = \
+            get_pr_review_reqs(client, owner, repo, number)
         review_results = get_pr_reviews(pr_reviews_raw)
         comments = get_pr_comments(client, owner, repo, number)
         commits = get_pr_commits(client, owner, repo, number)
@@ -150,18 +153,20 @@ def make_report(user, client, prs_with_reviews):
             pr_review_result = review_results[pr_reviewer]['state']
             report_entry['pr_reviews'][pr_reviewer] = pr_review_result
 
-        # Add requests from other users unless there is a review set by them there already
-        for pr_review_request in review_requested_from_users:
-            if pr_review_request not in report_entry['pr_reviews'].keys():
-                report_entry['pr_reviews'][pr_review_request] = 'REVIEW_REQUESTED'
+        # Add requests from other users unless there is a review set already
+        for pr_review_req in review_requested_from_users:
+            if pr_review_req not in report_entry['pr_reviews'].keys():
+                report_entry['pr_reviews'][pr_review_req] = 'REVIEW_REQUESTED'
 
-        last_user_review_date = review_results.get(user, {}).get('date') or NEVER
+        last_review_date = review_results.get(user, {}).get('date') or NEVER
 
         # Find last user comment
         user_comments = filter(lambda x: x['user'] == user, comments)
         sorted_user_comments = sorted(user_comments, key=lambda x: x['date'])
-        last_user_comment_date = sorted_user_comments[-1]['date'] if sorted_user_comments else NEVER
-        logger.debug("last_user_comment_date {}".format(last_user_comment_date))
+        last_user_comment_date = sorted_user_comments[-1]['date'] \
+            if sorted_user_comments else NEVER
+        logger.debug("last_user_comment_date {}".format(
+            last_user_comment_date))
 
         # Get user email so we could filter out new commits by this user
         user_info_raw = client.get_user_info(user)
@@ -169,19 +174,20 @@ def make_report(user, client, prs_with_reviews):
 
         user_commits = filter(lambda x: x['user_email'] == user_email, commits)
         sorted_user_commits = sorted(user_commits, key=lambda x: x['date'])
-        last_user_commit_date = sorted_user_commits[-1]['date'] if sorted_user_commits else NEVER
+        last_user_commit_date = sorted_user_commits[-1]['date'] \
+            if sorted_user_commits else NEVER
         logger.debug("last_user_commit_date {}".format(last_user_commit_date))
 
         # If last activity date cannot be found the PR should be skipped
         if not user_was_requested_to_review and \
            last_user_comment_date == NEVER and \
-           last_user_review_date == NEVER and \
+           last_review_date == NEVER and \
            last_user_commit_date == NEVER:
             continue
 
         last_user_activity = max([
             last_user_comment_date,
-            last_user_review_date,
+            last_review_date,
             last_user_commit_date
         ])
         logger.debug("last_user_activity {}".format(last_user_activity))

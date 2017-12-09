@@ -5,56 +5,67 @@ from functools import lru_cache
 
 
 class GithubClient():
+    api_prefix = "https://api.github.com"
+
     def __init__(self, token=None):
         self.token = token
         self.total_count = 0
         self.session = requests.Session()
         if token:
-            self.session.headers['Authorization'] = 'token {token}'.format(token=token)
-        self.session.headers['Accept'] = 'application/vnd.github.black-cat-preview+json'
+            self.session.headers['Authorization'] = 'token {}'.format(token)
+        self.session.headers['Accept'] = \
+            'application/vnd.github.black-cat-preview+json'
 
     def get_involved_pull_requests(self, username):
-        tmpl = "https://api.github.com/search/issues"\
-               "?q=involves%3A{username}%20state%3Aopen%20type%3Apr&per_page=100"
-        url = tmpl.format(username=username)
-        return self._paginated_getter(url, subkey='items', set_total_count=True)
+        tmpl = "{prefix}/search/issues"\
+               "?q=involves%3A{}%20state%3Aopen%20type%3Apr&per_page=100"
+        url = tmpl.format(prefix=self.api_prefix, username)
+        return self._paginated_getter(url, subkey='items',
+                                      set_total_count=True)
 
     @lru_cache(maxsize=64)
     def get_user_info(self, username):
-        tmpl = "https://api.github.com/users/{username}"
-        url = tmpl.format(username=username)
+        tmpl = "{prefix}/users/{username}"
+        url = tmpl.format(prefix=self.api_prefix, username=username)
         return self._getter(url)
 
     def get_pr(self, owner, repo, number):
-        tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}"
-        url = tmpl.format(owner=owner, repo=repo, number=number)
+        tmpl = "{prefix}/repos/{owner}/{repo}/pulls/{number}"
+        url = tmpl.format(prefix=self.api_prefix,
+                          owner=owner, repo=repo, number=number)
         return self._getter(url)
 
     def get_pr_reviews(self, owner, repo, number):
-        tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/reviews"
-        url = tmpl.format(owner=owner, repo=repo, number=number)
+        tmpl = "{prefix}/repos/{owner}/{repo}/pulls/{number}/reviews"
+        url = tmpl.format(prefix=self.api_prefix,
+                          owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
     def get_pr_commits(self, owner, repo, number):
-        tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/commits"
-        url = tmpl.format(owner=owner, repo=repo, number=number)
+        tmpl = "{prefix}/repos/{owner}/{repo}/pulls/{number}/commits"
+        url = tmpl.format(prefix=self.api_prefix,
+                          owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
     def get_pr_comments(self, owner, repo, number):
-        tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/comments"
-        url = tmpl.format(owner=owner, repo=repo, number=number)
+        tmpl = "{prefix}/repos/{owner}/{repo}/pulls/{number}/comments"
+        url = tmpl.format(prefix=self.api_prefix,
+                          owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
     def get_pr_review_requests(self, owner, repo, number):
-        tmpl = "https://api.github.com/repos/{owner}/{repo}/pulls/{number}/requested_reviewers"
-        url = tmpl.format(owner=owner, repo=repo, number=number)
+        tmpl = "{prefix}/repos/{owner}/{repo}/" \
+               "pulls/{number}/requested_reviewers"
+        url = tmpl.format(prefix=self.api_prefix,
+                          owner=owner, repo=repo, number=number)
         return self._paginated_getter(url)
 
     @staticmethod
     @lru_cache(maxsize=64)
     def get_pr_info_from_link(pr_link):
         try:
-            repo_match = re.search('https://github.com/(\S+)/(\S+)/pull/(\d+)', pr_link)
+            repo_match = re.search('https://github.com/(\S+)/(\S+)/pull/(\d+)',
+                                   pr_link)
             return repo_match.groups()
         except Exception:
             # TODO: Log the exception
