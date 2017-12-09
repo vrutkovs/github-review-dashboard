@@ -1,9 +1,17 @@
+# Don't store token in the image
+github_review_dashboard/token
+
+# Ignore unpackage static files
+github_review_dashboard/static/package-lock.json
+github_review_dashboard/static/node_modules
+
+# Ignore mypy cache
+.mypy_cache/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-github_review_dashboard/token
-github_review_dashboard/static/node_modules
 
 # C extensions
 *.so
