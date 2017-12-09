@@ -22,7 +22,8 @@ class GithubClient():
         query = {
             'q': 'involves:{} state:open type:pr'.format(username),
             'per_page': 100}
-        tmpl.format(prefix=self.api_prefix, query=urllib.parse.quote(q))
+        url = tmpl.format(prefix=self.api_prefix,
+                          query=urllib.parse.urlencode(query))
         return self._paginated_getter(url, subkey='items',
                                       set_total_count=True)
 
