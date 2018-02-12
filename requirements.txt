@@ -1,4 +1,4 @@
-aiohttp==2.3.10
+aiohttp==3.0.1
 aiohttp-sse==1.1.0
 aiohttp_jinja2==0.15.0
 python-dateutil==2.6.1
